@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    
+    <!-- Laurel wreath - left side -->
+    <path
+        android:fillColor="#2D5B4B"
+        android:pathData="M3,12C3,7.5 6.5,4 12,4V6C7.6,6 4.5,8.9 4.5,12.5C4.5,13.8 5,15 5.8,16L3.8,17.2C2.7,15.7 3,13.9 3,12Z"/>
+    
+    <path
+        android:fillColor="#5A8A72"
+        android:pathData="M5.2,8C6,7.2 7.2,6.5 8.5,6.5C9.8,6.5 11,7.2 11.8,8L10.6,9.2C10.1,8.7 9.3,8.5 8.5,8.5C7.7,8.5 6.9,8.7 6.4,9.2L5.2,8Z"/>
+    
+    <!-- Laurel wreath - right side -->
+    <path
+        android:fillColor="#2D5B4B"
+        android:pathData="M21,12C21,7.5 17.5,4 12,4V6C16.4,6 19.5,8.9 19.5,12.5C19.5,13.8 19,15 18.2,16L20.2,17.2C21.3,15.7 21,13.9 21,12Z"/>
+    
+    <path
+        android:fillColor="#5A8A72"
+        android:pathData="M18.8,8C18,7.2 16.8,6.5 15.5,6.5C14.2,6.5 13,7.2 12.2,8L13.4,9.2C13.9,8.7 14.7,8.5 15.5,8.5C16.3,8.5 17.1,8.7 17.6,9.2L18.8,8Z"/>
+    
+    <!-- Bottom connection -->
+    <path
+        android:fillColor="#2D5B4B"
+        android:pathData="M8,18C8,19.1 8.9,20 10,20H14C15.1,20 16,19.1 16,18L15,17H9L8,18Z"/>
+</vector>

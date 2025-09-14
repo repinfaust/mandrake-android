@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    
+    <!-- Arc/semicircle -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#2D5B4B"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M4,12A8,8 0,0,1 20,12"/>
+    
+    <!-- Inner arc -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#5A8A72"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M6,12A6,6 0,0,1 18,12"/>
+    
+    <!-- Center point -->
+    <path
+        android:fillColor="#2D5B4B"
+        android:pathData="M12,10A2,2 0,0,1 14,12A2,2 0,0,1 12,14A2,2 0,0,1 10,12A2,2 0,0,1 12,10"/>
+</vector>

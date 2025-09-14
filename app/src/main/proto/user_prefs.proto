@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+option java_package = "com.repinfaust.mandrake.data.prefs";
+option java_multiple_files = true;
+
+message UserPrefs {
+  int32 points = 1;
+  bool onboarding_completed = 2;
+  string support_region = 3; // "UK" or "USA"
+}

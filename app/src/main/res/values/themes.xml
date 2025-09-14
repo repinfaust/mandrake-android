@@ -1,0 +1,17 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Compose-friendly Material3 app theme -->
+    <style name="Theme.Mandrake" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Keep the status bar clean; Compose can handle edge-to-edge -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/black</item>
+        <!-- Optional: allow edge-to-edge if you later enable it -->
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <style name="Theme.Mandrake.Splash" parent="Theme.SplashScreen">
+        <!-- Android 12+ splash API background -->
+        <item name="windowSplashScreenBackground">#F4EDE3</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/mandrake_splash_logo</item>
+        <item name="postSplashScreenTheme">@style/Theme.Mandrake</item>
+    </style>
+</resources>

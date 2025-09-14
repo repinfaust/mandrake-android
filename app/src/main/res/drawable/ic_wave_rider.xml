@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    
+    <!-- Circle -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#2D5B4B"
+        android:strokeWidth="2"
+        android:pathData="M12,12m-9,0a9,9 0,1,1 18,0a9,9 0,1,1 -18,0"/>
+    
+    <!-- Wave inside circle -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#2D5B4B"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M6,12C7,10 8,14 9,12C10,10 11,14 12,12C13,10 14,14 15,12C16,10 17,14 18,12"/>
+    
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#5A8A72"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M7,14C8,12 9,16 10,14C11,12 12,16 13,14C14,12 15,16 16,14C17,12 17,16 17,14"/>
+</vector>

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "673031588546",
+    "project_id": "mandrake-fbdc0",
+    "storage_bucket": "mandrake-fbdc0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:673031588546:android:65bb4b14b3eb0652b6095b",
+        "android_client_info": {
+          "package_name": "com.repinfaust.mandrake"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "673031588546-fjslt4ub00icpclaggg80bncdndtc8ml.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.repinfaust.mandrake",
+            "certificate_hash": "8c543e3cf789f1ab0898a216fe75d21cb5d4111b"
+          }
+        },
+        {
+          "client_id": "673031588546-am2rc2r9dtn28trgevcmvkknsugmdk1t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDh-7sN5-bZrrHUSn7oUgwdWeib_S9Y4kQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "673031588546-am2rc2r9dtn28trgevcmvkknsugmdk1t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
