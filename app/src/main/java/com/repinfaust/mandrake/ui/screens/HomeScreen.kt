@@ -356,8 +356,10 @@ fun HomeScreen(nav: NavController) {
                                         val newMilestone = StatsComputer.getLatestAchievedMilestone(events)
                                         android.util.Log.d("MilestoneCelebration", "Old: ${oldMilestone?.name}, New: ${newMilestone?.name}")
                                         
-                                        if (newMilestone != null && newMilestone != oldMilestone) {
-                                            currentMilestone = newMilestone
+                                        val shouldShowMilestoneCelebration = newMilestone != null && (oldMilestone == null || newMilestone.hoursRequired > oldMilestone.hoursRequired)
+                                        
+                                        if (shouldShowMilestoneCelebration) {
+                                            currentMilestone = newMilestone!!
                                             showMilestoneBanner = true
                                             
                                             android.util.Log.d("MilestoneCelebration", "Showing celebration for: ${newMilestone.name}")
@@ -368,6 +370,9 @@ fun HomeScreen(nav: NavController) {
                                                 "🎉 Milestone achieved: ${newMilestone.name}!", 
                                                 Toast.LENGTH_LONG
                                             ).show()
+                                        } else {
+                                            // Show acknowledgment for action completion
+                                            Toast.makeText(context, "✓ Action completed!", Toast.LENGTH_SHORT).show()
                                         }
                                         
                                         // Get next available action AFTER successful save
@@ -426,8 +431,10 @@ fun HomeScreen(nav: NavController) {
                                         val newMilestone = StatsComputer.getLatestAchievedMilestone(events)
                                         android.util.Log.d("MilestoneCelebration", "Old: ${oldMilestone?.name}, New: ${newMilestone?.name}")
                                         
-                                        if (newMilestone != null && newMilestone != oldMilestone) {
-                                            currentMilestone = newMilestone
+                                        val shouldShowMilestoneCelebration = newMilestone != null && (oldMilestone == null || newMilestone.hoursRequired > oldMilestone.hoursRequired)
+                                        
+                                        if (shouldShowMilestoneCelebration) {
+                                            currentMilestone = newMilestone!!
                                             showMilestoneBanner = true
                                             
                                             android.util.Log.d("MilestoneCelebration", "Showing celebration for: ${newMilestone.name}")
@@ -438,6 +445,9 @@ fun HomeScreen(nav: NavController) {
                                                 "🎉 Milestone achieved: ${newMilestone.name}!", 
                                                 Toast.LENGTH_LONG
                                             ).show()
+                                        } else {
+                                            // Show acknowledgment for action completion
+                                            Toast.makeText(context, "✓ Action completed!", Toast.LENGTH_SHORT).show()
                                         }
                                         
                                         // Get next available action AFTER successful save
@@ -577,22 +587,41 @@ fun HomeScreen(nav: NavController) {
                         onSave = { event ->
                             scope.launch {
                                 val oldMilestone = currentMilestone
+                                android.util.Log.d("MilestoneCelebration", "QuickLogSheet onSave - old milestone: ${oldMilestone?.name}")
+                                
                                 repo.logEvent(event).fold(
                                     onSuccess = {
+                                        android.util.Log.d("MilestoneCelebration", "Event saved successfully: ${event.eventType}")
+                                        
+                                        // Reload events first to get accurate counts
                                         events = repo.getAllEvents()
-                                        val newMilestone =
-                                            StatsComputer.getLatestAchievedMilestone(events)
+                                        val newMilestone = StatsComputer.getLatestAchievedMilestone(events)
+                                        
+                                        android.util.Log.d("MilestoneCelebration", "Old: ${oldMilestone?.name}:${oldMilestone?.hoursRequired}, New: ${newMilestone?.name}:${newMilestone?.hoursRequired}")
 
-                                        if (newMilestone != null && newMilestone != oldMilestone) {
+                                        // Check if milestone celebration should be shown instead of acknowledgment
+                                        val shouldShowMilestoneCelebration = newMilestone != null && (oldMilestone == null || newMilestone.hoursRequired > oldMilestone.hoursRequired)
+                                        
+                                        if (shouldShowMilestoneCelebration) {
+                                            android.util.Log.d("MilestoneCelebration", "NEW MILESTONE ACHIEVED: ${newMilestone!!.name} (required: ${newMilestone.hoursRequired})")
                                             currentMilestone = newMilestone
                                             showMilestoneBanner = true
                                             
-                                            // Show celebration toast
+                                            // Show milestone celebration toast instead of acknowledgment
                                             Toast.makeText(
                                                 context, 
                                                 "🎉 Milestone achieved: ${newMilestone.name}!", 
                                                 Toast.LENGTH_LONG
                                             ).show()
+                                        } else {
+                                            // Show immediate acknowledgment for the save action (no milestone to celebrate)
+                                            val saveMessage = when (event.eventType) {
+                                                EventType.BYPASSED_URGE -> "✓ Alternative choice saved!"
+                                                EventType.AVOIDED_TASK -> "✓ Avoided task logged!"
+                                                else -> "✓ Progress saved!"
+                                            }
+                                            Toast.makeText(context, saveMessage, Toast.LENGTH_SHORT).show()
+                                            android.util.Log.d("MilestoneCelebration", "No new milestone to show - showing acknowledgment instead")
                                         }
 
                                         urgesBypassed = events.count { it.eventType == EventType.BYPASSED_URGE }
@@ -607,7 +636,8 @@ fun HomeScreen(nav: NavController) {
                                             shouldShowNudge = riskRepo.shouldShowNudge()
                                         }
                                     },
-                                    onFailure = {
+                                    onFailure = { error ->
+                                        android.util.Log.e("MilestoneCelebration", "Failed to save event", error)
                                         showLog = false
                                     }
                                 )
@@ -635,6 +665,9 @@ fun HomeScreen(nav: NavController) {
                             scope.launch {
                                 repo.logEvent(event).fold(
                                     onSuccess = {
+                                        // Show acknowledgment for logging gave-in event
+                                        Toast.makeText(context, "✓ Event logged, thank you for your honesty", Toast.LENGTH_SHORT).show()
+                                        
                                         events = repo.getAllEvents()
                                         lastUrgeFlowTime = System.currentTimeMillis()
                                         subtleHaptic(context)
@@ -662,6 +695,9 @@ fun HomeScreen(nav: NavController) {
                             scope.launch {
                                 repo.logEvent(event).fold(
                                     onSuccess = {
+                                        // Show acknowledgment for logging gave-in event
+                                        Toast.makeText(context, "✓ Event logged, thank you for your honesty", Toast.LENGTH_SHORT).show()
+                                        
                                         events = repo.getAllEvents()
                                         lastUrgeFlowTime = System.currentTimeMillis()
                                         subtleHaptic(context)
@@ -787,14 +823,19 @@ fun HomeScreen(nav: NavController) {
                                                 
                                                 // Check for new milestone achievement
                                                 val newMilestone = StatsComputer.getLatestAchievedMilestone(events)
-                                                if (newMilestone != null && newMilestone != oldMilestone) {
-                                                    currentMilestone = newMilestone
+                                                val shouldShowMilestoneCelebration = newMilestone != null && (oldMilestone == null || newMilestone.hoursRequired > oldMilestone.hoursRequired)
+                                                
+                                                if (shouldShowMilestoneCelebration) {
+                                                    currentMilestone = newMilestone!!
                                                     showMilestoneBanner = true
                                                     Toast.makeText(
                                                         context, 
                                                         "🎉 Milestone achieved: ${newMilestone.name}!", 
                                                         Toast.LENGTH_LONG
                                                     ).show()
+                                                } else {
+                                                    // Show acknowledgment for repair action completion
+                                                    Toast.makeText(context, "✓ Repair action completed!", Toast.LENGTH_SHORT).show()
                                                 }
                                             },
                                             onFailure = { }
@@ -832,14 +873,19 @@ fun HomeScreen(nav: NavController) {
                                                 
                                                 // Check for new milestone achievement
                                                 val newMilestone = StatsComputer.getLatestAchievedMilestone(events)
-                                                if (newMilestone != null && newMilestone != oldMilestone) {
-                                                    currentMilestone = newMilestone
+                                                val shouldShowMilestoneCelebration = newMilestone != null && (oldMilestone == null || newMilestone.hoursRequired > oldMilestone.hoursRequired)
+                                                
+                                                if (shouldShowMilestoneCelebration) {
+                                                    currentMilestone = newMilestone!!
                                                     showMilestoneBanner = true
                                                     Toast.makeText(
                                                         context, 
                                                         "🎉 Milestone achieved: ${newMilestone.name}!", 
                                                         Toast.LENGTH_LONG
                                                     ).show()
+                                                } else {
+                                                    // Show acknowledgment for repair action completion
+                                                    Toast.makeText(context, "✓ Repair action completed!", Toast.LENGTH_SHORT).show()
                                                 }
                                             },
                                             onFailure = { }

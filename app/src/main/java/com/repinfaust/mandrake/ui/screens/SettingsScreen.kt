@@ -34,6 +34,13 @@ import androidx.core.content.FileProvider
 import java.io.File
 import java.io.FileWriter
 import com.repinfaust.mandrake.nav.Routes
+import com.repinfaust.mandrake.data.repo.CustomChipRepository
+import com.repinfaust.mandrake.data.entity.CustomChip
+import com.repinfaust.mandrake.data.entity.ChipType
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.IconButton
 
 @Composable
 fun SettingsScreen(nav: NavController) {
@@ -43,10 +50,20 @@ fun SettingsScreen(nav: NavController) {
   val scope = rememberCoroutineScope()
   val database = remember { AppDatabase.get(context) }
   val urgeRepo = remember { FirestoreUrgeRepository() }
+  val customChipRepo = remember { CustomChipRepository(database.customChipDao()) }
   
   var showResetDialog by remember { mutableStateOf(false) }
   var showCelebrations by remember { mutableStateOf(true) }
   var showRegionDialog by remember { mutableStateOf(false) }
+  var showChipManagement by remember { mutableStateOf(false) }
+  
+  var tacticChips by remember { mutableStateOf<List<CustomChip>>(emptyList()) }
+  var urgeAboutChips by remember { mutableStateOf<List<CustomChip>>(emptyList()) }
+  
+  LaunchedEffect(Unit) {
+    tacticChips = customChipRepo.getAllChipsForType(ChipType.TACTIC)
+    urgeAboutChips = customChipRepo.getAllChipsForType(ChipType.URGE_ABOUT)
+  }
   
   val currentRegion by userPrefsDataStore.supportRegion.collectAsState(initial = "UK")
   
@@ -381,6 +398,61 @@ fun SettingsScreen(nav: NavController) {
       }
     }
     
+    Spacer(modifier = Modifier.height(16.dp))
+    
+    // Custom Chip Management
+    Card(
+      modifier = Modifier.fillMaxWidth(),
+      colors = CardDefaults.cardColors(
+        containerColor = MaterialTheme.colorScheme.surfaceVariant
+      )
+    ) {
+      Column(
+        modifier = Modifier.padding(16.dp)
+      ) {
+        Text(
+          text = "Custom Chips",
+          style = MaterialTheme.typography.titleMedium,
+          fontWeight = FontWeight.Medium,
+          modifier = Modifier.padding(bottom = 8.dp)
+        )
+        
+        Text(
+          text = "Manage your custom urge categories and alternative actions",
+          style = MaterialTheme.typography.bodyMedium,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+          modifier = Modifier.padding(bottom = 16.dp)
+        )
+        
+        Row(
+          modifier = Modifier
+            .fillMaxWidth()
+            .clickable { showChipManagement = true }
+            .padding(vertical = 8.dp),
+          horizontalArrangement = Arrangement.SpaceBetween,
+          verticalAlignment = Alignment.CenterVertically
+        ) {
+          Column(modifier = Modifier.weight(1f)) {
+            Text(
+              text = "Manage Custom Chips",
+              style = MaterialTheme.typography.bodyMedium,
+              fontWeight = FontWeight.Medium
+            )
+            Text(
+              text = "${tacticChips.size} alternative actions, ${urgeAboutChips.size} urge categories",
+              style = MaterialTheme.typography.bodySmall,
+              color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+          }
+          Icon(
+            Icons.Default.KeyboardArrowRight,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
+          )
+        }
+      }
+    }
+    
     // Region selection dialog
     if (showRegionDialog) {
       AlertDialog(
@@ -511,6 +583,127 @@ fun SettingsScreen(nav: NavController) {
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.padding(bottom = 16.dp)
+      )
+    }
+    
+    // Custom Chip Management Dialog
+    if (showChipManagement) {
+      AlertDialog(
+        onDismissRequest = { showChipManagement = false },
+        title = { Text("Manage Custom Chips") },
+        text = {
+          LazyColumn(
+            modifier = Modifier.height(400.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+          ) {
+            if (tacticChips.isNotEmpty()) {
+              item {
+                Text(
+                  text = "Alternative Actions:",
+                  style = MaterialTheme.typography.titleSmall,
+                  fontWeight = FontWeight.Bold,
+                  modifier = Modifier.padding(bottom = 4.dp)
+                )
+              }
+              items(tacticChips) { chip ->
+                Row(
+                  modifier = Modifier.fillMaxWidth(),
+                  horizontalArrangement = Arrangement.SpaceBetween,
+                  verticalAlignment = Alignment.CenterVertically
+                ) {
+                  Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                      text = chip.text,
+                      style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(
+                      text = "Used ${chip.usageCount} times",
+                      style = MaterialTheme.typography.bodySmall,
+                      color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                  }
+                  IconButton(
+                    onClick = {
+                      scope.launch {
+                        customChipRepo.deleteChip(chip.id)
+                        tacticChips = customChipRepo.getAllChipsForType(ChipType.TACTIC)
+                      }
+                    }
+                  ) {
+                    Icon(
+                      Icons.Default.Delete,
+                      contentDescription = "Delete chip",
+                      tint = MaterialTheme.colorScheme.error
+                    )
+                  }
+                }
+              }
+              item {
+                Spacer(modifier = Modifier.height(16.dp))
+              }
+            }
+            
+            if (urgeAboutChips.isNotEmpty()) {
+              item {
+                Text(
+                  text = "Urge Categories:",
+                  style = MaterialTheme.typography.titleSmall,
+                  fontWeight = FontWeight.Bold,
+                  modifier = Modifier.padding(bottom = 4.dp)
+                )
+              }
+              items(urgeAboutChips) { chip ->
+                Row(
+                  modifier = Modifier.fillMaxWidth(),
+                  horizontalArrangement = Arrangement.SpaceBetween,
+                  verticalAlignment = Alignment.CenterVertically
+                ) {
+                  Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                      text = chip.text,
+                      style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(
+                      text = "Used ${chip.usageCount} times",
+                      style = MaterialTheme.typography.bodySmall,
+                      color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                  }
+                  IconButton(
+                    onClick = {
+                      scope.launch {
+                        customChipRepo.deleteChip(chip.id)
+                        urgeAboutChips = customChipRepo.getAllChipsForType(ChipType.URGE_ABOUT)
+                      }
+                    }
+                  ) {
+                    Icon(
+                      Icons.Default.Delete,
+                      contentDescription = "Delete chip",
+                      tint = MaterialTheme.colorScheme.error
+                    )
+                  }
+                }
+              }
+            }
+            
+            if (tacticChips.isEmpty() && urgeAboutChips.isEmpty()) {
+              item {
+                Text(
+                  text = "No custom chips yet. Create some by selecting 'Other' when logging urges and alternative actions.",
+                  style = MaterialTheme.typography.bodyMedium,
+                  color = MaterialTheme.colorScheme.onSurfaceVariant,
+                  modifier = Modifier.padding(16.dp)
+                )
+              }
+            }
+          }
+        },
+        confirmButton = {
+          TextButton(onClick = { showChipManagement = false }) {
+            Text("Done")
+          }
+        }
       )
     }
   }

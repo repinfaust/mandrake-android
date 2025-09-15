@@ -47,26 +47,51 @@ class BillingRepository(
             }
             
             if (client.isReady) {
-                continuation.resume(true)
+                if (continuation.isActive) {
+                    continuation.resume(true)
+                }
                 return@suspendCancellableCoroutine
             }
             
+            var resumed = false
+            
             client.startConnection(object : BillingClientStateListener {
                 override fun onBillingSetupFinished(result: BillingResult) {
-                    if (result.responseCode == BillingClient.BillingResponseCode.OK) {
-                        Log.d(TAG, "Billing client connected successfully")
-                        continuation.resume(true)
-                    } else {
-                        Log.e(TAG, "Billing setup failed: ${result.debugMessage}")
-                        continuation.resume(false)
+                    synchronized(this) {
+                        if (!resumed && continuation.isActive) {
+                            resumed = true
+                            if (result.responseCode == BillingClient.BillingResponseCode.OK) {
+                                Log.d(TAG, "Billing client connected successfully")
+                                continuation.resume(true)
+                            } else {
+                                Log.e(TAG, "Billing setup failed: ${result.debugMessage}")
+                                continuation.resume(false)
+                            }
+                        }
                     }
                 }
                 
                 override fun onBillingServiceDisconnected() {
                     Log.d(TAG, "Billing service disconnected")
-                    continuation.resume(false)
+                    synchronized(this) {
+                        if (!resumed && continuation.isActive) {
+                            resumed = true
+                            continuation.resume(false)
+                        }
+                    }
                 }
             })
+            
+            continuation.invokeOnCancellation {
+                synchronized(this) {
+                    resumed = true
+                }
+                try {
+                    client.endConnection()
+                } catch (e: Exception) {
+                    Log.w(TAG, "Error ending connection on cancellation", e)
+                }
+            }
         }
     }
     

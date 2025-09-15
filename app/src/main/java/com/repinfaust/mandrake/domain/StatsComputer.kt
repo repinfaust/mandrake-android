@@ -45,8 +45,11 @@ object StatsComputer {
   }
   
   fun getLatestAchievedMilestone(events: List<UrgeEvent>): Milestone? {
-    return calculateMilestones(events)
+    val achievedMilestones = calculateMilestones(events)
       .filter { it.isAchieved }
-      .maxByOrNull { it.hoursRequired }
+    
+    android.util.Log.d("MilestoneCelebration", "Achieved milestones: ${achievedMilestones.map { "${it.name}:${it.hoursRequired}" }}")
+    
+    return achievedMilestones.maxByOrNull { it.hoursRequired }
   }
 }

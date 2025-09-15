@@ -27,4 +27,10 @@ interface CustomChipDao {
     
     @Query("UPDATE custom_chips SET active = 0 WHERE id = :chipId")
     suspend fun deactivateChip(chipId: Long)
+    
+    @Query("SELECT * FROM custom_chips WHERE chipType = :chipType ORDER BY usageCount DESC")
+    suspend fun getChipsByType(chipType: ChipType): List<CustomChip>
+    
+    @Query("DELETE FROM custom_chips WHERE id = :chipId")
+    suspend fun deleteChip(chipId: Long)
 }
