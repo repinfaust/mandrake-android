@@ -9,12 +9,23 @@ import com.repinfaust.mandrake.ui.theme.UrgeTheme
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContent {
-      UrgeTheme {
-        MaterialTheme {
-          NavGraph()
+    
+    try {
+      setContent {
+        UrgeTheme {
+          MaterialTheme {
+            NavGraph()
+          }
         }
       }
+    } catch (e: Exception) {
+      android.util.Log.e("MainActivity", "Error in onCreate", e)
+      recreate()
     }
+  }
+  
+  override fun onResume() {
+    super.onResume()
+    android.util.Log.d("MainActivity", "onResume called")
   }
 }

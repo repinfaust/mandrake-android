@@ -35,6 +35,14 @@ class CustomChipRepository(
         customChipDao.deactivateChip(chipId)
     }
     
+    suspend fun getAllChipsForType(chipType: ChipType): List<CustomChip> {
+        return customChipDao.getChipsByType(chipType)
+    }
+    
+    suspend fun deleteChip(chipId: Long) {
+        customChipDao.deleteChip(chipId)
+    }
+    
     suspend fun createCustomAction(
         text: String, 
         category: ActionDomain, 
