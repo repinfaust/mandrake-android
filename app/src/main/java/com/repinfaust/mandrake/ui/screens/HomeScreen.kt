@@ -665,6 +665,9 @@ fun HomeScreen(nav: NavController) {
                             scope.launch {
                                 repo.logEvent(event).fold(
                                     onSuccess = {
+                                        // Show acknowledgment for logging gave-in event
+                                        Toast.makeText(context, "✓ Event logged, thank you for your honesty", Toast.LENGTH_SHORT).show()
+                                        
                                         events = repo.getAllEvents()
                                         lastUrgeFlowTime = System.currentTimeMillis()
                                         subtleHaptic(context)
@@ -692,6 +695,9 @@ fun HomeScreen(nav: NavController) {
                             scope.launch {
                                 repo.logEvent(event).fold(
                                     onSuccess = {
+                                        // Show acknowledgment for logging gave-in event
+                                        Toast.makeText(context, "✓ Event logged, thank you for your honesty", Toast.LENGTH_SHORT).show()
+                                        
                                         events = repo.getAllEvents()
                                         lastUrgeFlowTime = System.currentTimeMillis()
                                         subtleHaptic(context)
