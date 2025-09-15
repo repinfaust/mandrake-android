@@ -487,6 +487,7 @@ private fun MilestonesContent(events: List<UrgeEvent>) {
             MilestoneCard(
                 milestone = milestone.copy(isAchieved = urgesBypassed >= milestone.hoursRequired),
                 context = context,
+                currentProgress = urgesBypassed,
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -505,6 +506,7 @@ private fun MilestonesContent(events: List<UrgeEvent>) {
             MilestoneCard(
                 milestone = milestone.copy(isAchieved = avoidedTasksCompleted >= milestone.hoursRequired),
                 context = context,
+                currentProgress = avoidedTasksCompleted,
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -515,9 +517,11 @@ private fun MilestonesContent(events: List<UrgeEvent>) {
 private fun MilestoneCard(
     milestone: Milestone,
     context: android.content.Context,
+    currentProgress: Int,
     modifier: Modifier = Modifier
 ) {
     val achieved = milestone.isAchieved
+    val progressText = "$currentProgress/${milestone.hoursRequired}"
 
     Card(
         modifier = modifier,
@@ -564,15 +568,31 @@ private fun MilestoneCard(
             )
 
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = milestone.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = if (achieved)
-                        MaterialTheme.colorScheme.onPrimaryContainer
-                    else
-                        MaterialTheme.colorScheme.onSurface
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = milestone.name,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = if (achieved)
+                            MaterialTheme.colorScheme.onPrimaryContainer
+                        else
+                            MaterialTheme.colorScheme.onSurface
+                    )
+                    
+                    Text(
+                        text = progressText,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = if (achieved)
+                            MaterialTheme.colorScheme.primary
+                        else
+                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                    )
+                }
 
                 Text(
                     text = milestone.description,
@@ -580,7 +600,8 @@ private fun MilestoneCard(
                     color = if (achieved)
                         MaterialTheme.colorScheme.onPrimaryContainer
                     else
-                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                    modifier = Modifier.padding(top = 4.dp)
                 )
             }
 
